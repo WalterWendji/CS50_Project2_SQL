@@ -3,15 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse 
 
 from .forms import Listing
 
 from .models import AuctionListing, User
 
-
+auction_listings = AuctionListing.objects.all()
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {"auction_listings": auction_listings})
 
 
 def login_view(request):
@@ -25,7 +25,7 @@ def login_view(request):
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
         else:
             return render(request, "auctions/login.html", {
                 "message": "Invalid username and/or password."
@@ -36,7 +36,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
 
 
 def register(request):
@@ -61,7 +61,7 @@ def register(request):
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
     else:
         return render(request, "auctions/register.html")
 
@@ -86,8 +86,8 @@ def create_new_listing(request):
                 )
 
             auction_listing.save()
-            print("save successfully")
-            return HttpResponseRedirect(reverse(index))
+            print(f"save successfully: {auction_listing}")
+            return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
     else:
         form = Listing()
     return render(request, "auctions/newListing.html", {"form": form})
