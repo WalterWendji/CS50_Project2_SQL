@@ -10,6 +10,8 @@ from .forms import Listing
 from .models import AuctionListing, User
 
 auction_listings = AuctionListing.objects.all()
+watchlist = []
+
 def index(request):
     return render(request, "auctions/index.html", {"auction_listings": auction_listings})
 
@@ -91,3 +93,19 @@ def create_new_listing(request):
     else:
         form = Listing()
     return render(request, "auctions/newListing.html", {"form": form})
+
+@login_required
+def listing(request, auction_id):
+    auction = AuctionListing.objects.get(pk=auction_id)
+    if request.method == "POST":
+        if auction in watchlist:
+            watchlist.remove(auction)
+        else:
+            watchlist.append(auction)
+        print(watchlist)    
+    return render(request, "auctions/listing.html", {"auction":auction})
+
+
+def show_watchlist(request):
+    
+    return render(request, "auctions/watchlist.html", {"watchlist": watchlist})

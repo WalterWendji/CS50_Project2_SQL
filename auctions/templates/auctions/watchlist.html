@@ -1,0 +1,21 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body%}
+<ul>
+    {% if watchlist %}
+      {% for listing in watchlist %}
+        <li>
+          <a href="{% url 'listing' listing.id %}">
+            {% if listing.imageURL %}
+              <img src="{{ listing.imageURL }}" alt="image of a listing" />
+            {% endif %}
+            <h4>{{ listing.title }}</h4>
+            <span>{{ listing.price }} $</span>
+            <p>{{ listing.description }}</p>
+            <p>Created {{ listing.created_at }}</p>
+          </a>
+        </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+{% endblock %}

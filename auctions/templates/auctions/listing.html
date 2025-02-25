@@ -1,0 +1,30 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+  <h3>Listing: {{ auction.title }}</h3>
+  <form action="" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Watchlist">
+  </form>
+  {% if auction.imageURL %}
+    <img src="{{ auction.imageURL }}" alt="image of this listing" />
+  {% endif %}
+  <p>{{ auction.description }}</p>
+  <h3>${{ auction.price }}</h3>
+  <p>2 bid(s) so far. Your bid is the current bid</p>  {% comment %} TODO {% endcomment %}
+  <form action="" method="POST">
+    <input type="number" name="bid" id="bid" placeholder="Bid">
+    <input type="submit" value="Place Bid">
+  </form>
+  <h4>Details</h4>
+  <ul>
+    <li>Listed by: {{ auction.created_by }}</li>
+    <li>
+      Category:{% if auction.category %}
+        {{ auction.category }}
+      {% else %}
+        No Category listed
+      {% endif %}
+    </li>
+  </ul>
+{% endblock %}
