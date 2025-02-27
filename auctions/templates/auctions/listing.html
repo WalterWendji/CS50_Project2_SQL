@@ -4,17 +4,32 @@
   <h3>Listing: {{ auction.title }}</h3>
   <form action="" method="POST">
     {% csrf_token %}
-    <input type="submit" value="Watchlist">
+    <input type="submit" value="Watchlist" />
   </form>
   {% if auction.imageURL %}
     <img src="{{ auction.imageURL }}" alt="image of this listing" />
   {% endif %}
   <p>{{ auction.description }}</p>
-  <h3>${{ auction.price }}</h3>
-  <p>2 bid(s) so far. Your bid is the current bid</p>  {% comment %} TODO {% endcomment %}
-  <form action="" method="POST">
-    <input type="number" name="bid" id="bid" placeholder="Bid">
-    <input type="submit" value="Place Bid">
+  {% if bid_number %}
+    <h3>highest bid: $ {{ highest_bid }}</h3>
+    <h3>Current bids:</h3>
+    <ul>
+      {% for bid in bid_number %}
+        <li>$ {{ bid }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <h3>Starting bid: $ {{ auction.price }}</h3>
+  {% endif %}
+
+  <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+  <form action="{% url 'listing' auction.id %}" method="POST">
+    {% csrf_token %}
+    <input type="number" name="bid" id="bid" placeholder="Bid" />
+    <input type="submit" value="Place Bid" />
   </form>
   <h4>Details</h4>
   <ul>

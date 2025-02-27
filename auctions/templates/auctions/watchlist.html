@@ -3,16 +3,16 @@
 {% block body%}
 <ul>
     {% if watchlist %}
-      {% for listing in watchlist %}
+      {% for item in watchlist %}
         <li>
-          <a href="{% url 'listing' listing.id %}">
-            {% if listing.imageURL %}
-              <img src="{{ listing.imageURL }}" alt="image of a listing" />
+          <a href="{% url 'listing' item.auction.id %}">
+            {% if item.auction.imageURL %}
+              <img src="{{ item.auction.imageURL }}" alt="image of a item" />
             {% endif %}
-            <h4>{{ listing.title }}</h4>
-            <span>{{ listing.price }} $</span>
-            <p>{{ listing.description }}</p>
-            <p>Created {{ listing.created_at }}</p>
+            <h4>{{ item.auction.title }}</h4>
+            <span>{{ item.auction.price }} $</span>
+            <p>{{ item.auction.description }}</p>
+            <p>Created {{ item.auction.created_at }}</p>
           </a>
         </li>
       {% endfor %}
