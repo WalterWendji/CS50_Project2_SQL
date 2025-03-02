@@ -22,15 +22,35 @@
     <h3>Starting bid: $ {{ auction.price }}</h3>
   {% endif %}
 
-  <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
-  {% if message %}
-    <p>{{ message }}</p>
+  {% if not is_user_creator %}
+    <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+    {% if not got_winner %}
+      <form action="{% url 'listing' auction.id %}" method="POST">
+        {% csrf_token %}
+        <input type="number" name="bid" id="bid" placeholder="Bid" />
+        <input type="submit" value="Place Bid" />
+      </form>
+    {% else %}
+      {% if won_auction_message %}
+        <h3>{{ won_auction_message }}</h3>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    <p>{{ bid_number|length }} bid(s) so far!</p>
+    {% if not got_winner %}
+      <form action="{% url 'listing' auction.id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" id="close_auction" name="close_auction" value="Close the auction" />
+      </form>
+    {% else %}
+      {% if won_auction_message %}
+        <h3>{{ won_auction_message }}</h3>
+      {% endif %}
+    {% endif %}
   {% endif %}
-  <form action="{% url 'listing' auction.id %}" method="POST">
-    {% csrf_token %}
-    <input type="number" name="bid" id="bid" placeholder="Bid" />
-    <input type="submit" value="Place Bid" />
-  </form>
   <h4>Details</h4>
   <ul>
     <li>Listed by: {{ auction.created_by }}</li>

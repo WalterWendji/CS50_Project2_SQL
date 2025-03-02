@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -15,6 +14,7 @@ class AuctionListing(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_closed = models.BooleanField(default=False) 
     
 class Bid(models.Model):
     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -22,6 +22,7 @@ class Bid(models.Model):
     auction_listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE) 
     auction_title = models.CharField(max_length=30)
     bid_time = models.DateTimeField(auto_now_add=True)
+    is_bidder_winner = models.BooleanField(default=False)
 
 class Comment(models.Model):
     comment_text = models.TextField() 

@@ -4,17 +4,16 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from platformdirs import user_cache_dir 
 
 from .forms import Listing
-
 from .models import AuctionListing, Bid, User, Watchlist
 
-auction_listings = AuctionListing.objects.all()
-#watchlist = []
 
 def index(request):
-    return render(request, "auctions/index.html", {"auction_listings": auction_listings})
+    auction_listings = AuctionListing.objects.all()
+    return render(
+        request, "auctions/index.html", {"auction_listings": auction_listings}
+    )
 
 
 def login_view(request):
@@ -30,9 +29,11 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse("index"))
         else:
-            return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            return render(
+                request,
+                "auctions/login.html",
+                {"message": "Invalid username and/or password."},
+            )
     else:
         return render(request, "auctions/login.html")
 
@@ -51,20 +52,22 @@ def register(request):
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
         if password != confirmation:
-            return render(request, "auctions/register.html", {
-                "message": "Passwords must match."
-            })
+            return render(
+                request, "auctions/register.html", {"message": "Passwords must match."}
+            )
 
         # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Username already taken."
-            })
+            return render(
+                request,
+                "auctions/register.html",
+                {"message": "Username already taken."},
+            )
         login(request, user)
-        return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
+        return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
 
@@ -79,18 +82,11 @@ def create_new_listing(request):
             start_bid = form.cleaned_data["start_bid"]
             image_url = form.cleaned_data["image_url"]
             category = form.cleaned_data["category"]
-            auction_listing = AuctionListing(
-                title=title, 
-                description=description, 
-                price=start_bid, 
-                imageURL=image_url, 
-                category=category,
-                created_by = request.user
-                )
-
-            auction_listing.save()
-            print(f"save successfully: {auction_listing}")
-            return HttpResponseRedirect(reverse("index", kwargs={"auction_listings": auction_listings}))
+            auction_listings = form.save(commit=False)
+            auction_listings.created_by = request.user
+            auction_listings.save()
+            # print(f"save successfully: {auction_listing}")
+            return HttpResponseRedirect(reverse("index"))
     else:
         form = Listing()
     return render(request, "auctions/newListing.html", {"form": form})
@@ -98,44 +94,80 @@ def create_new_listing(request):
 
 def show_listing(request, auction_id):
     auction = AuctionListing.objects.get(pk=auction_id)
-    bid = ""
     bid_amounts = Bid.objects.filter(auction_listing=auction).values_list("bid_amount", flat=True)
     highest_bid = max(bid_amounts, default=0)
+    is_user_creator = request.user == auction.created_by
+    message = handle_watchlist_and_bid(request, auction, auction_id, highest_bid)
+    auction.refresh_from_db()
+
+    bid_amounts = Bid.objects.filter(auction_listing=auction).values_list(
+        "bid_amount", flat=True
+    )
+    highest_bid = max(bid_amounts, default=0)
     
-    message = perform_operation_for_watchlist_and_bid(request, bid, auction, auction_id, bid_amounts)       
-    return render(request, "auctions/listing.html", {"auction":auction, "bid":bid, "message" : message, "bid_number": bid_amounts, "highest_bid": highest_bid})
+    winner = Bid.objects.get(auction_listing=auction, bid_amount=highest_bid)
+    close_auction(request, auction, winner)
+    if request.user == winner.bidder:
+        winner_message = "Congratulation🥳!! You won the auction🎉!!"
+    else:
+        winner_message = f" {winner.bidder} won the auction 🦾"
+        
+    listing_parameters = {
+        "auction": auction,
+        "message": message,
+        "bid_number": bid_amounts,
+        "highest_bid": highest_bid,
+        "is_user_creator": is_user_creator,
+        "won_auction_message": winner_message,
+        "got_winner": winner.is_bidder_winner
+    }
+    return render(request, "auctions/listing.html", listing_parameters)
 
 
 def show_watchlist(request):
     watchlist = Watchlist.objects.filter(user=request.user).select_related("auction")
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist})
 
-def perform_operation_for_watchlist_and_bid(request, bid, auction, auction_id, bid_amounts):
+
+def handle_watchlist_and_bid(request, auction, auction_id, bid_amounts):
     message = ""
     if request.method == "POST":
         if not request.user.is_authenticated:
-            message = "Error: You should be logged in"
-        else: 
-            watchlist = Watchlist.objects.filter(user=request.user).select_related("auction")
-            if auction in [item.auction for item in watchlist]:
-                Watchlist.objects.get(user=request.user, auction=auction_id).delete()
-            else:
-                watch_element = Watchlist(
-                    user = request.user,
-                    auction = auction
-                )
-                watch_element.save()
-                
-            if request.POST.get("bid"):
-                bid_user = float(request.POST.get("bid"))
-                if bid_user >= auction.price and bid_user > max(bid_amounts, default=0):
-                    bid = Bid(
-                        bid_amount = bid_user,
-                        bidder = request.user,
-                        auction_listing = auction,
-                        auction_title = auction.title
-                    )
-                    bid.save()
-                else:
-                    message = "Error: The bid should be at least as large as the starting bid, and must be greather than any other bid that have been placed!"
-    return message 
+            return "Error: You should be logged in"
+        handle_watchlist(request, auction, auction_id)
+        if request.POST.get("bid"):
+            message = handle_bid(request, auction, bid_amounts)
+    return message
+
+
+def handle_watchlist(request, auction, auction_id):
+    watchlist = Watchlist.objects.filter(user=request.user).select_related("auction")
+    if auction in [item.auction for item in watchlist]:
+        Watchlist.objects.get(user=request.user, auction=auction_id).delete()
+    else:
+        Watchlist.objects.create(user=request.user, auction=auction)
+
+
+def handle_bid(request, auction, highest_bid):
+    bid_user = float(request.POST.get("bid"))
+    if bid_user > auction.price and bid_user > highest_bid:
+        Bid.objects.create(
+            bid_amount=bid_user,
+            bidder=request.user,
+            auction_listing=auction,
+            auction_title=auction.title,
+        )
+        return ""
+    else:
+        return "Error: The bid should be at least as large as the starting bid, and must be greather than any other bid that have been placed!"
+
+
+def close_auction(request, auction, winner):
+    if request.POST.get("close_auction"):
+        auction.is_closed = True
+        auction.save() 
+        winner.is_bidder_winner = True
+        winner.save()
+        print(f"it works {winner.bidder}")
+        
+#TODO: make disabled the the close auction in the watchlist
