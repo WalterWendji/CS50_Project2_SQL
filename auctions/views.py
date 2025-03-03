@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .forms import Listing
-from .models import AuctionListing, Bid, User, Watchlist
+from .models import AuctionListing, Bid, User, Watchlist, Comment
 
 
 def index(request):
@@ -85,7 +85,6 @@ def create_new_listing(request):
             auction_listings = form.save(commit=False)
             auction_listings.created_by = request.user
             auction_listings.save()
-            # print(f"save successfully: {auction_listing}")
             return HttpResponseRedirect(reverse("index"))
     else:
         form = Listing()
@@ -106,11 +105,18 @@ def show_listing(request, auction_id):
     highest_bid = max(bid_amounts, default=0)
     
     winner = Bid.objects.get(auction_listing=auction, bid_amount=highest_bid)
+    list_comment = ""
+    user_list = ""
     close_auction(request, auction, winner)
     if request.user == winner.bidder:
         winner_message = "Congratulation🥳!! You won the auction🎉!!"
     else:
         winner_message = f" {winner.bidder} won the auction 🦾"
+    
+    comment_error_message=comment(request, auction)
+    if Comment.objects.all():
+        list_comment = Comment.objects.filter(auction_listing=auction).values("comment_text", "commenter", "comment_time")
+        user_list = User.objects.values("id", "username")
         
     listing_parameters = {
         "auction": auction,
@@ -119,7 +125,10 @@ def show_listing(request, auction_id):
         "highest_bid": highest_bid,
         "is_user_creator": is_user_creator,
         "won_auction_message": winner_message,
-        "got_winner": winner.is_bidder_winner
+        "got_winner": winner.is_bidder_winner,
+        "list_comment":list_comment,
+        "comment_error_message": comment_error_message,
+        "user_list": user_list
     }
     return render(request, "auctions/listing.html", listing_parameters)
 
@@ -168,6 +177,17 @@ def close_auction(request, auction, winner):
         auction.save() 
         winner.is_bidder_winner = True
         winner.save()
-        print(f"it works {winner.bidder}")
         
 #TODO: make disabled the the close auction in the watchlist
+
+#@login_required
+def comment(request, auction):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return "Error: You should be logged in"
+        if request.POST.get("comment"):
+            Comment.objects.create(
+                comment_text = request.POST.get("comment"),
+                commenter = request.user,
+                auction_listing = auction
+            )

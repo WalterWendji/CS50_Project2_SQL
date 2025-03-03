@@ -26,8 +26,8 @@ class Bid(models.Model):
 
 class Comment(models.Model):
     comment_text = models.TextField() 
-    commenter = models.ForeignKey(User, on_delete=models.CASCADE)
-    auction_listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE) #The listing the comment is associated with
+    commenter = models.ForeignKey(User, on_delete=models.PROTECT)
+    auction_listing = models.ForeignKey(AuctionListing, on_delete=models.PROTECT) #The listing the comment is associated with
     comment_time = models.DateTimeField(auto_now_add=True)
     
 class Watchlist(models.Model):

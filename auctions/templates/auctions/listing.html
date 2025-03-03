@@ -62,4 +62,30 @@
       {% endif %}
     </li>
   </ul>
+  <h4>Comments</h4>
+  <form action="{% url 'listing' auction.id %}" method="POST">
+    {% csrf_token %}
+    <textarea name="comment" id="comment" placeholder="enter your comment here"></textarea>
+    <input type="submit" value="send" />
+  </form>
+  {% if comment_error_message %}
+    <p>{{ comment_error_message }}</p>
+  {% endif %}
+  <h4>Comment section</h4>
+  {% if list_comment %}
+    <ul>
+      {% for comment_element in list_comment %}
+        <li>
+          <span>{{ comment_element.comment_text }}</span><br />
+          {% if user_list %}
+            {% for user in user_list %}
+              {% if user.id == comment_element.commenter %}
+                <span>{{ user.username }} | {{ comment_element.comment_time }}</span>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </li><br />
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endblock %}
