@@ -19,7 +19,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <h3>Starting bid: $ {{ auction.price }}</h3>
+    <h3>Starting bid: $ {{ auction.start_bid }}</h3>
   {% endif %}
 
   {% if not is_user_creator %}
@@ -79,7 +79,7 @@
           <span>{{ comment_element.comment_text }}</span><br />
           {% if user_list %}
             {% for user in user_list %}
-              {% if user.id == comment_element.commenter %}
+              {% if user.id == comment_element.commenter_id %}
                 <span>{{ user.username }} | {{ comment_element.comment_time }}</span>
               {% endif %}
             {% endfor %}

@@ -1,3 +1,4 @@
+from unicodedata import category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -103,21 +104,27 @@ def show_listing(request, auction_id):
         "bid_amount", flat=True
     )
     highest_bid = max(bid_amounts, default=0)
-    
-    winner = Bid.objects.get(auction_listing=auction, bid_amount=highest_bid)
     list_comment = ""
     user_list = ""
-    close_auction(request, auction, winner)
-    if request.user == winner.bidder:
-        winner_message = "Congratulation🥳!! You won the auction🎉!!"
+    is_bidder_winner = False
+    winner_message = ""
+    
+    if Bid.objects.filter(auction_listing=auction).all():
+        winner = Bid.objects.get(auction_listing=auction, bid_amount=highest_bid)
+        close_auction(request, auction, winner)
+        is_bidder_winner = winner.is_bidder_winner
+        if request.user == winner.bidder:
+            winner_message = "Congratulation🥳!! You won the auction🎉!!"
+        else:
+            winner_message = f" {winner.bidder} won the auction 🦾"
     else:
-        winner_message = f" {winner.bidder} won the auction 🦾"
+        is_bidder_winner = False
     
     comment_error_message=comment(request, auction)
     if Comment.objects.all():
-        list_comment = Comment.objects.filter(auction_listing=auction).values("comment_text", "commenter", "comment_time")
+        list_comment = Comment.objects.filter(auction_listing=auction).values("comment_text", "commenter_id", "comment_time")
         user_list = User.objects.values("id", "username")
-        
+  
     listing_parameters = {
         "auction": auction,
         "message": message,
@@ -125,7 +132,7 @@ def show_listing(request, auction_id):
         "highest_bid": highest_bid,
         "is_user_creator": is_user_creator,
         "won_auction_message": winner_message,
-        "got_winner": winner.is_bidder_winner,
+        "got_winner": is_bidder_winner,
         "list_comment":list_comment,
         "comment_error_message": comment_error_message,
         "user_list": user_list
@@ -188,6 +195,18 @@ def comment(request, auction):
         if request.POST.get("comment"):
             Comment.objects.create(
                 comment_text = request.POST.get("comment"),
-                commenter = request.user,
+                commenter_id = request.user,
                 auction_listing = auction
             )
+
+def show_categories(request):
+    auctions = AuctionListing.objects.all()
+    categories = set()
+    for auction_element in auctions:
+        categories.add(auction_element.category)
+    return render(request, "auctions/categories.html", {"categories":categories})
+
+def show_category_details(request, category_name):
+    auctions_from_category = AuctionListing.objects.filter(category=category_name).all()
+    print(category_name, auctions_from_category)
+    return render(request, "auctions/category_details.html", {"auctions_from_category": auctions_from_category})

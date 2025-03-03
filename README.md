@@ -15,6 +15,8 @@ The following requirements must to be fulfill:
     - [x] If a user is signed in on a closed listing page, and the user has won that auction, the page should say so.
     - [x] Users who are signed in should be able to add comments to the listing page. The listing page should display all comments that have been made on the listing.
 - [x] **Watchlist**: Users who are signed in should be able to visit a Watchlist page, which should display all of the listings that a user has added to their watchlist. Clicking on any of those listings should take the user to that listing’s page.
-- [ ] **Categories**: Users should be able to visit a page that displays a list of all listing categories. Clicking on the name of any category should take the user to a page that displays all of the active listings in that category.
+- [x] **Categories**: Users should be able to visit a page that displays a list of all listing categories. Clicking on the name of any category should take the user to a page that displays all of the active listings in that category.
 - [x] **Django Admin** Interface: Via the Django admin interface, a site administrator should be able to view, add, edit, and delete any listings, comments, and bids made on the site.
 
+#TODO: make disabled the the close auction in the watchlist
+#TODO: style the website
