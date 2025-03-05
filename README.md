@@ -20,3 +20,4 @@ The following requirements must to be fulfill:
 
 #TODO: make disabled the the close auction in the watchlist
 #TODO: style the website
+#TODO: show the current price of the items.

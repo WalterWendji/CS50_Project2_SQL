@@ -1,3 +1,42 @@
 body {
     padding: 10px;
+
+}
+
+li {
+    list-style: none;
+    /* background-color: chocolate; */
+    width: 20vw;
+
+}
+
+img {
+    width: 20vw;
+}
+
+.list-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+
+
+a:link {
+    text-decoration: none;
+    color: black;
+}
+
+.current_price {
+    color: red;
+}
+
+.label_current_price {
+    color: black;
+    font-weight: 600;
+}
+
+.listing_title {
+    font-weight: 600;
+    font-size: 1.5rem;
 }
