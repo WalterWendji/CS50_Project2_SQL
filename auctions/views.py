@@ -12,8 +12,15 @@ from .models import AuctionListing, Bid, User, Watchlist, Comment
 
 def index(request):
     auction_listings = AuctionListing.objects.all()
+    bid = Bid.objects.all()
+    highest_bids = {}
+    for listing_element in auction_listings:
+        highest_bid = max(bid.filter(auction_listing=listing_element.id).values_list("bid_amount", flat=True), default= 0)
+        highest_bids[listing_element.id] = highest_bid if highest_bid else listing_element.start_bid
+    
+    print(f"here is {highest_bids}")
     return render(
-        request, "auctions/index.html", {"auction_listings": auction_listings}
+        request, "auctions/index.html", {"auction_listings": auction_listings, "highest_bids": highest_bids}
     )
 
 

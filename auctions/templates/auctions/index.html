@@ -13,7 +13,11 @@
                 <img src="{{ listing.imageURL }}" alt="image of a listing" />
               {% endif %}
               <h4 class="listing_title">{{ listing.title }}</h4>
-              <span class="current_price"><span class="label_current_price">Current Price: </span> USD $ {{ listing.start_bid }}</span>
+              {% for id, bid in highest_bids.items%}
+                {% if id == listing.id%}
+                  <span class="current_price"><span class="label_current_price">Current Price: </span> USD ${{ bid }}</span>
+                {% endif %}
+              {% endfor %}
               <p>{{ listing.description }}</p>
               <span>Created {{ listing.created_at }}</span>
             </a>
