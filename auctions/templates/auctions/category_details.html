@@ -1,15 +1,16 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-  <h2>Active Listings from category {{auctions_from_category.category}} </h2>
-  <ul>
+<div class="content">
+  <h2>Active listings from category <span class="item-title">{{category_name}}</span></h2>
+  <ul class="list-items">
     {% if auctions_from_category %}
       {% for listing in auctions_from_category %}
         {% if not listing.is_closed %}
           <li>
             <a href="{% url 'listing' listing.id %}">
               {% if listing.imageURL %}
-                <img src="{{ listing.imageURL }}" alt="image of a listing" />
+                <img src="{{ listing.imageURL }}" alt="image of a listing" class="image-item"/>
               {% endif %}
               <h4>{{ listing.title }}</h4>
               <span>{{ listing.price }} $</span>
@@ -23,4 +24,5 @@
       <h3>No active listings available</h3>
     {% endif %}
   </ul>
+</div>
 {% endblock %}

@@ -2,7 +2,8 @@
 
 
 {% block body %}
-  <h2>Active Listings</h2>
+<div class="content">
+  <h2 class="title-index">Active Listings</h2>
   <ul class="list-items">
     {% if auction_listings %}
       {% for listing in auction_listings %}
@@ -10,7 +11,7 @@
           <li>
             <a href="{% url 'listing' listing.id %}">
               {% if listing.imageURL %}
-                <img src="{{ listing.imageURL }}" alt="image of a listing" />
+                <img src="{{ listing.imageURL }}" alt="image of a listing" class="image-item"/>
               {% endif %}
               <h4 class="listing_title">{{ listing.title }}</h4>
               {% for id, bid in highest_bids.items%}
@@ -19,7 +20,7 @@
                 {% endif %}
               {% endfor %}
               <p>{{ listing.description }}</p>
-              <span>Created {{ listing.created_at }}</span>
+              <span class="date-label">Created {{ listing.created_at }}</span>
             </a>
           </li>
         {% endif %}
@@ -28,4 +29,5 @@
       <h3>No active listings available</h3>
     {% endif %}
   </ul>
+</div>
 {% endblock %}

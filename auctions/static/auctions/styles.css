@@ -1,23 +1,56 @@
-body {
-    padding: 10px;
+body {}
 
+header {
+    padding: 10px 10px 0 10px;
+    background-color: #333;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+.content {
+    padding: 0 10px 10px 10px;
 }
 
 li {
     list-style: none;
-    /* background-color: chocolate; */
-    width: 20vw;
-
+    text-decoration: none;
 }
 
-img {
-    width: 20vw;
+a {
+    text-decoration: none;
+}
+.image-item {
+    min-width: 200px;
+    max-width: 15vw;
 }
 
 .list-items {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
+    margin-top: 30px;
+}
+
+.list-items li {
+    max-width: 300px;
+    padding: 6px
+}
+.list-items li a{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+.list-items li:hover {
+    border: 2px solid #0d2e1f;
+    border-radius: 10px;
+}
+
+.title-index {
+    font-weight: 600;
+    text-align: center;
+    margin-top: 40px;
 }
 
 
@@ -38,5 +71,159 @@ a:link {
 
 .listing_title {
     font-weight: 600;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+}
+
+#categories_listing {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+#categories_listing li {
+    background-color: darkslategrey;
+    min-width: 300px;
+    text-align: center;
+    font-size: 150%;
+    color: white;
+}
+
+#categories_listing li a {
+    min-width: 300px;
+    max-width: 300px;
+    padding: 50px;
+    display: inline-block;
+    color: white;
+}
+
+#categories_listing li:hover {
+    background-color: rgb(26, 34, 34);
+    cursor: pointer;
+}
+
+.nav {
+    margin: 0 0 20px 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.nav li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+}
+
+.nav li {
+    float: left;
+}
+
+.nav li a:hover {
+    background-color: #111;
+}
+
+.date-label {
+    font-weight: 200;
+    font-style: italic;
+}
+
+#authentication {
+    width: 75%;
+    max-width: 700px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+#authentication h2 {
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+#listing-details {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+#listing-image {
+    min-width: 400px;
+    max-width: 20vw;
+    margin-top: 15px;
+}
+
+.comment {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.listing-details > div > h3 {
+    margin-bottom: 35px;
+}
+
+.item-title {
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.details {
+    margin-top: 20px;
+}
+
+.creation-information {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.comment-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.comment-form input {
+    width: 70px;
+    height: 50px;
+}
+
+.comment-form textarea {
+    border-radius: 10px;
+}
+
+.comment-text {
+    font-weight: 600;
+    padding-left: 34px;
+}
+
+.watchlist-element { 
+    /* pointer-events: none; */
+    opacity:0.6; 
+}
+
+.profile-icon {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+}
+
+.profile {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: flex-end;
+}
+
+.comment-list li {
+    text-align: left;
+    
+
 }

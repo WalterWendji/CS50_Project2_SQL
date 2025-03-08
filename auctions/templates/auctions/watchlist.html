@@ -1,21 +1,26 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body%}
-<ul>
+<div class="content">
+<ul class="list-items">
     {% if watchlist %}
       {% for item in watchlist %}
-        <li>
+        <li {% if item.auction.is_closed %}
+        class="watchlist-element"
+        {% endif %}>
           <a href="{% url 'listing' item.auction.id %}">
             {% if item.auction.imageURL %}
-              <img src="{{ item.auction.imageURL }}" alt="image of a item" />
+              <img src="{{ item.auction.imageURL }}" alt="image of a item" class="image-item"/>
             {% endif %}
             <h4>{{ item.auction.title }}</h4>
             <span>{{ item.auction.price }} $</span>
             <p>{{ item.auction.description }}</p>
             <p>Created {{ item.auction.created_at }}</p>
+            {% if item.auction.is_closed %} <p>This auction has been closed</p>{% endif %}
           </a>
         </li>
       {% endfor %}
     {% endif %}
   </ul>
+</div>
 {% endblock %}

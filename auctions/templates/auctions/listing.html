@@ -1,91 +1,110 @@
 {% extends 'auctions/layout.html' %}
+{% load static %}
 
 {% block body %}
-  <h3>Listing: {{ auction.title }}</h3>
-  <form action="" method="POST">
-    {% csrf_token %}
-    <input type="submit" value="Watchlist" />
-  </form>
-  {% if auction.imageURL %}
-    <img src="{{ auction.imageURL }}" alt="image of this listing" />
-  {% endif %}
-  <p>{{ auction.description }}</p>
-  {% if bid_number %}
-    <h3>highest bid: $ {{ highest_bid }}</h3>
-    <h3>Current bids:</h3>
-    <ul>
-      {% for bid in bid_number %}
-        <li>$ {{ bid }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <h3>Starting bid: $ {{ auction.start_bid }}</h3>
-  {% endif %}
-
-  {% if not is_user_creator %}
-    <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
-    {% if message %}
-      <p>{{ message }}</p>
-    {% endif %}
-    {% if not got_winner %}
-      <form action="{% url 'listing' auction.id %}" method="POST">
-        {% csrf_token %}
-        <input type="number" name="bid" id="bid" placeholder="Bid" />
-        <input type="submit" value="Place Bid" />
-      </form>
-    {% else %}
-      {% if won_auction_message %}
-        <h3>{{ won_auction_message }}</h3>
-      {% endif %}
-    {% endif %}
-  {% else %}
-    <p>{{ bid_number|length }} bid(s) so far!</p>
-    {% if not got_winner %}
-      <form action="{% url 'listing' auction.id %}" method="POST">
-        {% csrf_token %}
-        <input type="submit" id="close_auction" name="close_auction" value="Close the auction" />
-      </form>
-    {% else %}
-      {% if won_auction_message %}
-        <h3>{{ won_auction_message }}</h3>
-      {% endif %}
-    {% endif %}
-  {% endif %}
-  <h4>Details</h4>
-  <ul>
-    <li>Listed by: {{ auction.created_by }}</li>
-    <li>
-      Category:{% if auction.category %}
-        {{ auction.category }}
-      {% else %}
-        No Category listed
-      {% endif %}
-    </li>
-  </ul>
-  <h4>Comments</h4>
-  <form action="{% url 'listing' auction.id %}" method="POST">
-    {% csrf_token %}
-    <textarea name="comment" id="comment" placeholder="enter your comment here"></textarea>
-    <input type="submit" value="send" />
-  </form>
-  {% if comment_error_message %}
-    <p>{{ comment_error_message }}</p>
-  {% endif %}
-  <h4>Comment section</h4>
-  {% if list_comment %}
-    <ul>
-      {% for comment_element in list_comment %}
-        <li>
-          <span>{{ comment_element.comment_text }}</span><br />
-          {% if user_list %}
-            {% for user in user_list %}
-              {% if user.id == comment_element.commenter_id %}
-                <span>{{ user.username }} | {{ comment_element.comment_time }}</span>
-              {% endif %}
+  <div class="content">
+    <section id="listing-details">
+      <div>
+        <h3>Listing: <span class="item-title">{{ auction.title }}</span></h3>
+        <form action="" method="POST">
+          {% csrf_token %}
+          <input type="submit" value="Watchlist" name="watchlist-element"/>
+        </form>
+        {% if auction.imageURL %}
+          <img src="{{ auction.imageURL }}" alt="image of this listing" id="listing-image" class="image-item" />
+        {% endif %}
+      </div>
+      <div>
+        <h3>Description</h3>
+        <p>{{ auction.description }}</p>
+        {% if bid_number %}
+          <h3>highest bid: <span class="current_price">USD $ {{ highest_bid }}</span></h3>
+          <h3>last bids:</h3>
+          <ul>
+            {% for bid in bid_number %}
+              <li>$ {{ bid }}</li>
             {% endfor %}
+          </ul>
+        {% else %}
+          <h3>Starting bid: <span class="current_price">USD $ {{ auction.start_bid }}</span></h3>
+        {% endif %}
+
+        {% if not is_user_creator %}
+          <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
+          {% if message %}
+            <p>{{ message }}</p>
           {% endif %}
-        </li><br />
-      {% endfor %}
-    </ul>
-  {% endif %}
+          {% if not got_winner %}
+            <form action="{% url 'listing' auction.id %}" method="POST">
+              {% csrf_token %}
+              <input type="number" name="bid" id="bid" placeholder="Bid" />
+              <input type="submit" value="Place Bid" />
+            </form>
+          {% else %}
+            {% if won_auction_message %}
+              <h3>{{ won_auction_message }}</h3>
+            {% endif %}
+          {% endif %}
+        {% else %}
+          <p>{{ bid_number|length }} bid(s) so far!</p>
+          {% if not got_winner %}
+            <form action="{% url 'listing' auction.id %}" method="POST">
+              {% csrf_token %}
+              <input type="submit" id="close_auction" name="close_auction" value="Close the auction" />
+            </form>
+          {% else %}
+            {% if won_auction_message %}
+              <h3>{{ won_auction_message }}</h3>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+        <h4 class="details">Details</h4>
+        <ul>
+          <li>
+            Listed by: <span class="creation-information">{{ auction.created_by }}</span>
+          </li>
+          <li>
+            Category:{% if auction.category %}
+              <span class="creation-information">{{ auction.category }}</span>
+            {% else %}
+              No Category listed
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </section>
+    <hr />
+    <section class="comment">
+      <h4>Comments</h4>
+      <form action="{% url 'listing' auction.id %}" method="POST" class="comment-form">
+        {% csrf_token %}
+        <textarea name="comment" id="comment" placeholder="enter your comment here" rows="3" cols="50"></textarea>
+        <input type="submit" value="send" />
+      </form>
+      {% if comment_error_message %}
+        <p>{{ comment_error_message }}</p>
+      {% endif %}
+      {% if list_comment %}
+        <ul class="comment-list">
+          {% for comment_element in list_comment %}
+            <li>
+              {% if user_list %}
+                {% for user in user_list %}
+                  {% if user.id == comment_element.commenter_id %}
+                    <div class="profile">
+                      <img src="{% static 'auctions/profile-icon.svg' %}" alt="avatar icon" class="profile-icon" />
+                      <span>{{ user.username }} - {{ comment_element.comment_time }}</span>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              <span class="comment-text">{{ comment_element.comment_text }}</span><br />
+            </li><br />
+          {% endfor %}
+        </ul>
+      {% else %}
+        <h4>No comments</h4>
+      {% endif %}
+    </section>
+  </div>
 {% endblock %}

@@ -164,11 +164,12 @@ def handle_watchlist_and_bid(request, auction, auction_id, bid_amounts):
 
 
 def handle_watchlist(request, auction, auction_id):
-    watchlist = Watchlist.objects.filter(user=request.user).select_related("auction")
-    if auction in [item.auction for item in watchlist]:
-        Watchlist.objects.get(user=request.user, auction=auction_id).delete()
-    else:
-        Watchlist.objects.create(user=request.user, auction=auction)
+    if request.POST.get("watchlist-element"):
+        watchlist = Watchlist.objects.filter(user=request.user).select_related("auction")
+        if auction in [item.auction for item in watchlist]:
+            Watchlist.objects.get(user=request.user, auction=auction_id).delete()
+        else:
+            Watchlist.objects.create(user=request.user, auction=auction)
 
 
 def handle_bid(request, auction, highest_bid):
@@ -215,5 +216,5 @@ def show_categories(request):
 
 def show_category_details(request, category_name):
     auctions_from_category = AuctionListing.objects.filter(category=category_name).all()
-    print(category_name, auctions_from_category)
-    return render(request, "auctions/category_details.html", {"auctions_from_category": auctions_from_category})
+    print(f"hier is {category_name}, {auctions_from_category}")
+    return render(request, "auctions/category_details.html", {"auctions_from_category": auctions_from_category, "category_name": category_name})
