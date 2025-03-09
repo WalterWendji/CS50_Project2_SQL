@@ -1,4 +1,5 @@
 {% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block body %}
 <div class="content">
@@ -6,7 +7,7 @@
     <p> please enter the listing details </p>
     <form action="{% url 'newListing' %}" method="POST">
         {% csrf_token %}
-        {{ form }}
+        {% crispy form %}
         {% comment %} <label for="title">Title</label><br>
         <input type="text" name="title" required/><br>
 

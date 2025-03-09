@@ -6,6 +6,7 @@ header {
     color: white;
     position: sticky;
     top: 0;
+    z-index: 3;
 }
 
 .content {
@@ -225,5 +226,39 @@ a:link {
 .comment-list li {
     text-align: left;
     
+}
 
+.asteriskField {
+    display: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.watchlist-length {
+    background-color: #14a463;
+    padding: 4px 6px 4px 6px;
+    border-radius: 6px;
+}
+
+a {
+    color: black;
+}
+
+a:hover {
+    color: black;
+}
+
+.form-horizontal{
+    position: relative;
+    z-index: 0;
 }

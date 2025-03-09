@@ -1,4 +1,3 @@
-from unicodedata import category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -17,12 +16,9 @@ def index(request):
     for listing_element in auction_listings:
         highest_bid = max(bid.filter(auction_listing=listing_element.id).values_list("bid_amount", flat=True), default= 0)
         highest_bids[listing_element.id] = highest_bid if highest_bid else listing_element.start_bid
-    
-    print(f"here is {highest_bids}")
     return render(
         request, "auctions/index.html", {"auction_listings": auction_listings, "highest_bids": highest_bids}
     )
-
 
 def login_view(request):
     if request.method == "POST":
@@ -193,7 +189,6 @@ def close_auction(request, auction, winner):
         winner.is_bidder_winner = True
         winner.save()
         
-#TODO: make disabled the the close auction in the watchlist
 
 #@login_required
 def comment(request, auction):
