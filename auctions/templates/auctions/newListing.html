@@ -3,27 +3,10 @@
 
 {% block body %}
 <div class="content">
-    <h2>Create a New Listings</h2>
-    <p> please enter the listing details </p>
+    <h2>Create a new auction listing</h2>
     <form action="{% url 'newListing' %}" method="POST">
         {% csrf_token %}
         {% crispy form %}
-        {% comment %} <label for="title">Title</label><br>
-        <input type="text" name="title" required/><br>
-
-        <label for="description">Description</label><br>
-        <textarea name="description" rows="4", cols="30" required></textarea><br>
-
-        <label for="number">Number</label><br>
-        <input type="number" name="number" required/><br>
-
-        <label for="imageurl">Image's URL</label><br>
-        <input type="url" name="imageurl"/><br>
-
-        <label for="category">Category</label><br>
-        <input type="text" name="category" placeholder="e.g. Fashion, Toys, Electronics, Home, etc."/><br> {% endcomment %}
-
-        <input type="submit" value="Create Listing" />
     </form>
 </div>
 {% endblock %}

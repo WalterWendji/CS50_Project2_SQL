@@ -206,6 +206,7 @@ def show_categories(request):
     auctions = AuctionListing.objects.all()
     categories = set()
     for auction_element in auctions:
+        print(auction_element)
         categories.add(auction_element.category)
     return render(request, "auctions/categories.html", {"categories":categories})
 
