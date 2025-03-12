@@ -5,22 +5,23 @@ from crispy_forms.bootstrap import AppendedText, FormActions, Field
 
 from auctions.models import AuctionListing
 
-CATEGORIES = (
-    (None, "--please choose a category--"),
-    ("antique_and_arts", "Antiques & Arts"),
-    ("books", "Books"),
-    ("cds_dvs_video_games", "CDs, DVD & Video Games"),
-    ("clothing_and_accessories", "Clothing & Accessories"),
-    ("computer_and_electronics", "Computer & Electronics"),
-    ("food_wine_and_gourmet", "Food, Wine & Gourmet Itmes"),
-    ("golf_and_sport_gear", "Golf & Sports Gear"),
-    ("handbags_and_jewelry", "Handbags & Jewelry"),
-    ("health_and_fitness", "Health & Fitness"),
-    ("auto", "Auto"),
-    ("home_and_garden", "Home & Garden"),
-    ("toys", "Toys"),
-)
 class Listing(forms.ModelForm):
+    CATEGORIES = (
+        (None, "--please choose a category--"),
+        ("antique_and_arts", "Antiques & Arts"),
+        ("books", "Books"),
+        ("cds_dvs_video_games", "CDs, DVD & Video Games"),
+        ("clothing_and_accessories", "Clothing & Accessories"),
+        ("computer_and_electronics", "Computer & Electronics"),
+        ("smartphone_and_tablets", "Smartphones & Tablets"),
+        ("food_wine_and_gourmet", "Food, Wine & Gourmet Itmes"),
+        ("golf_and_sport_gear", "Golf & Sports Gear"),
+        ("handbags_and_jewelry", "Handbags & Jewelry"),
+        ("health_and_fitness", "Health & Fitness"),
+        ("auto", "Auto"),
+        ("home_and_garden", "Home & Garden"),
+        ("toys", "Toys"),
+    )
     title = forms.CharField(label="Title:", max_length=100, required=True)
     description = forms.CharField(label="Description:", max_length=300, widget=forms.Textarea, required=True)
     start_bid = forms.DecimalField(label="Starting Bid:", required=True)

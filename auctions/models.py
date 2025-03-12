@@ -15,6 +15,7 @@ class AuctionListing(models.Model):
         ("cds_dvs_video_games", "CDs, DVD & Video Games"),
         ("clothing_and_accessories", "Clothing & Accessories"),
         ("computer_and_electronics", "Computer & Electronics"),
+        ("smartphone_and_tablets", "Smartphones & Tablets"),
         ("food_wine_and_gourmet", "Food, Wine & Gourmet Itmes"),
         ("golf_and_sport_gear", "Golf & Sports Gear"),
         ("handbags_and_jewelry", "Handbags & Jewelry"),

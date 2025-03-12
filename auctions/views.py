@@ -86,8 +86,10 @@ def create_new_listing(request):
             start_bid = form.cleaned_data["start_bid"]
             image_url = form.cleaned_data["image_url"]
             category = form.cleaned_data["category"]
+            selected_category = dict(Listing.CATEGORIES).get(category)
             auction_listings = form.save(commit=False)
             auction_listings.created_by = request.user
+            auction_listings.category = selected_category
             auction_listings.save()
             return HttpResponseRedirect(reverse("index"))
     else:
