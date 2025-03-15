@@ -25,10 +25,10 @@ class AuctionListing(models.Model):
         ("toys", "Toys"),
     )
 
-    title = models.CharField(max_length=30)
-    imageURL = models.URLField(null=True, blank=True)
+    title = models.CharField(max_length=100)
+    imageURL = models.URLField()
     category = models.CharField(choices=CATEGORIES, max_length=50)
-    description = models.TextField()
+    description = models.TextField(max_length=500)
     start_bid = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -39,7 +39,7 @@ class Bid(models.Model):
     bid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     bidder = models.ForeignKey(User, on_delete=models.CASCADE)
     auction_listing = models.ForeignKey(AuctionListing, on_delete=models.CASCADE)
-    auction_title = models.CharField(max_length=30)
+    auction_title = models.CharField(max_length=100)
     bid_time = models.DateTimeField(auto_now_add=True)
     is_bidder_winner = models.BooleanField(default=False)
 

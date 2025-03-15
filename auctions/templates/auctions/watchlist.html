@@ -8,18 +8,24 @@
         <li {% if item.auction.is_closed %}
         class="watchlist-element"
         {% endif %}>
-          <a href="{% url 'listing' item.auction.id %}">
-            {% if item.auction.imageURL %}
-              <img src="{{ item.auction.imageURL }}" alt="image of a item" class="image-item"/>
+        <a href="{% url 'listing' item.auction.id %}">
+          {% if item.auction.imageURL %}
+            <img src="{{ item.auction.imageURL }}" alt="image of a listing" class="image-item"/>
+          {% endif %}
+          <h4 class="listing_title">{{ item.auction.title }}</h4>
+          {% for id, bid in highest_bids.items%}
+            {% if id == item.auction.id%}
+              <span class="current_price"><span class="label_current_price">Current Price: </span> USD ${{ bid }}</span>
             {% endif %}
-            <h4>{{ item.auction.title }}</h4>
-            <span>{{ item.auction.price }} $</span>
-            <p>{{ item.auction.description }}</p>
-            <p>Created {{ item.auction.created_at }}</p>
+          {% endfor %}
+          <p>{{ item.auction.description }}</p>
+          <span class="date-label">Created {{ item.auction.created_at }}</span>
             {% if item.auction.is_closed %} <p>This auction has been closed</p>{% endif %}
           </a>
         </li>
       {% endfor %}
+    {% else %}
+      <h3>No watchlist</h3>
     {% endif %}
   </ul>
 </div>

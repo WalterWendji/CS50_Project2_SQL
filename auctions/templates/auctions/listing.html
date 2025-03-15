@@ -6,9 +6,9 @@
     <section id="listing-details">
       <div>
         <h3>Listing: <span class="item-title">{{ auction.title }}</span></h3>
-        <form action="" method="POST">
+        <form action="{% url 'listing' auction.id %}" method="POST">
           {% csrf_token %}
-          <input type="submit" value="Watchlist" name="watchlist-element"/>
+          <input type="submit" value="Watchlist" name="watchlist-element" {% if is_auction_in_watchlist %} class="in-watchlist" {% endif %} />
         </form>
         {% if auction.imageURL %}
           <img src="{{ auction.imageURL }}" alt="image of this listing" id="listing-image" class="image-item" />
@@ -18,11 +18,11 @@
         <h3>Description</h3>
         <p>{{ auction.description }}</p>
         {% if bid_number %}
-          <h3>highest bid: <span class="current_price">USD $ {{ highest_bid }}</span></h3>
-          <h3>last bids:</h3>
+          <h3>Highest bid: <span class="current_price">USD $ {{ highest_bid }}</span></h3>
+          <h3>Last bid(s):</h3>
           <ul>
-            {% for bid in bid_number %}
-              <li>$ {{ bid }}</li>
+            {% for bid in bid_amount_to_be_displayed %}
+              <li class="last-bids">$ {{ bid }}</li>
             {% endfor %}
           </ul>
         {% else %}
@@ -30,9 +30,11 @@
         {% endif %}
 
         {% if not is_user_creator %}
-          <p>{{ bid_number|length }} bid(s) so far. Your bid is the current bid</p> {% comment %}TODO{% endcomment %}
+          {% if user.is_authenticated %}
+            <p>{{ bid_number|length }} bid(s) so far. {% if user_made_the_highest_bid %} Your bid is the current bid {% endif %}</p>
+          {% endif %} 
           {% if message %}
-            <p>{{ message }}</p>
+            <p class="alert alert-danger">{{ message }}</p>
           {% endif %}
           {% if not got_winner %}
             <form action="{% url 'listing' auction.id %}" method="POST">
@@ -42,21 +44,24 @@
             </form>
           {% else %}
             {% if won_auction_message %}
-              <h3>{{ won_auction_message }}</h3>
+              <h3 class="alert alert-success">{{ won_auction_message }}</h3>
             {% endif %}
           {% endif %}
         {% else %}
           <p>{{ bid_number|length }} bid(s) so far!</p>
-          {% if not got_winner %}
-            <form action="{% url 'listing' auction.id %}" method="POST">
-              {% csrf_token %}
-              <input type="submit" id="close_auction" name="close_auction" value="Close the auction" />
-            </form>
-          {% else %}
-            {% if won_auction_message %}
-              <h3>{{ won_auction_message }}</h3>
+            {% if auction.is_closed %}
+              <button class="auction-closed" disabled> Closed </button>
+            {% else %}
+              <form action="{% url 'listing' auction.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" id="close_auction" name="close_auction" value="Close this auction" />
+              </form>
             {% endif %}
-          {% endif %}
+            {% if got_winner %}
+              {% if won_auction_message %}
+                <h3 class="alert alert-success">{{ won_auction_message }}</h3>
+              {% endif %}
+            {% endif %}
         {% endif %}
         <h4 class="details">Details</h4>
         <ul>
@@ -65,7 +70,13 @@
           </li>
           <li>
             Category:{% if auction.category %}
-              <span class="creation-information">{{ auction.category }}</span>
+              <span class="creation-information">
+                {% for key, value in categories_list %}
+                  {% if auction.category == key %}
+                    {{value}}
+                  {% endif %}
+                {% endfor %}
+            </span>
             {% else %}
               No Category listed
             {% endif %}
@@ -82,7 +93,7 @@
         <input type="submit" value="send" />
       </form>
       {% if comment_error_message %}
-        <p>{{ comment_error_message }}</p>
+        <p class="alert alert-danger">{{ comment_error_message }}</p>
       {% endif %}
       {% if list_comment %}
         <ul class="comment-list">

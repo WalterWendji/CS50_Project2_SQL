@@ -1,7 +1,9 @@
 body {}
 
 header {
-    padding: 10px 10px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
     background-color: #333;
     color: white;
     position: sticky;
@@ -22,31 +24,37 @@ a {
     text-decoration: none;
 }
 .image-item {
-    min-width: 200px;
-    max-width: 15vw;
+    display: block;
+    /* min-width: 200px;
+    max-width: 15vw; */
+    width: 70%;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .list-items {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
     margin-top: 30px;
 }
 
 .list-items li {
-    max-width: 300px;
-    padding: 6px
+    width: 300px;
+    padding: 10px;
+    box-shadow: 1px 1px 18px #888888;
 }
 .list-items li a{
     display: inline-block;
-    width: 100%;
+    width: 99%;
     height: 100%;
 }
 
-.list-items li:hover {
+/* .list-items li:hover {
     border: 2px solid #0d2e1f;
     border-radius: 10px;
-}
+} */
 
 .title-index {
     font-weight: 600;
@@ -103,12 +111,23 @@ a:link {
     cursor: pointer;
 }
 
+header div {
+    display: flex;
+    align-items: center;
+}
+
+header div > div {
+    margin-right: 10px;
+}
+header div > div > strong {
+    margin-left:4px;
+}
 .nav {
-    margin: 0 0 20px 0;
     padding: 0;
     overflow: hidden;
     background-color: #333;
 }
+
 
 .nav li a {
     display: block;
@@ -143,9 +162,11 @@ a:link {
 }
 
 #listing-details {
+    width: 50%;
     display: flex;
     justify-content: center;
     gap: 50px;
+    margin: auto;
 }
 
 #listing-image {
@@ -163,6 +184,10 @@ a:link {
     margin-bottom: 35px;
 }
 
+.auction-closed:disabled {
+    opacity: 1;
+    cursor:not-allowed;
+}
 .item-title {
     font-weight: 600;
     font-size: 1.6rem;
@@ -261,4 +286,19 @@ a:hover {
 .form-horizontal{
     position: relative;
     z-index: 0;
+}
+
+.in-watchlist {
+    background-color:lightslategrey;
+    border-radius: 6px;
+    color: white;
+}
+
+.in-watchlist:hover {
+    background-color: rgb(97, 111, 125);
+    color: white;
+}
+
+.last-bids {
+    font-weight: 600;
 }
